@@ -1,0 +1,42 @@
+import pygame, sys
+from pygame.locals import *
+from random import randint
+
+WHITE = (255, 255, 255)
+
+WIDTH = (400,300)
+
+class Ball:
+    BALL_IMG = pygame.image.load('ball.png') 
+
+    width = map(sum,zip(map(lambda x : -x/2,BALL_IMG.get_size()),WIDTH))
+
+    def __init__(self,display,pos = [randint(0,width[0]),randint(0,width[1])],
+                 vel = [randint(0,10),randint(0,10)]):
+        self.display,self.pos,self.vel = display,pos,vel
+        
+    def move(self):
+        newpos = map(sum,zip(self.pos,self.vel))    
+        for i in [0,1]:
+            if newpos[i] < 0:
+                newpos[i]=0
+                self.vel[i] *= -1
+            elif newpos[i] > self.width[i]:
+                newpos[i] = self.width[i]
+                self.vel[i] *= -1
+        self.display.fill(WHITE,Rect(self.pos,self.BALL_IMG.get_size()))
+        self.pos = newpos
+        self.display.blit(self.BALL_IMG,self.pos)
+        
+def run():
+    pygame.init()
+    display = pygame.display.set_mode(WIDTH)
+    pygame.display.set_caption('My game')
+    display.fill(WHITE)
+    ball = Ball(display)
+    while True: 
+        ball.move()
+        pygame.display.update()
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
